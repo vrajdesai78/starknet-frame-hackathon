@@ -15,3 +15,5 @@ Add the below link in your Cast to use this frame:
 https://starknet-story-frame.vercel.app/
 ```
 
+Smart Contract Link: https://testnet.starkscan.co/contract/0x07d6a456565e355c07a4074b3e0d72b0b36f9ffe191236ab83199d6c4175c7ec 
+
