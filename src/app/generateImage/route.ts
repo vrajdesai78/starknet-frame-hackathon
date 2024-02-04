@@ -1,13 +1,20 @@
 import OpenAI from 'openai';
 
 export async function GET(request: Request) {
+  const { searchParams } = new URL(request.url);
+  const text = searchParams.get('text');
+
+  if (!text) {
+    return new Response('Text is required', { status: 400 });
+  }
+
   const openai = new OpenAI({
     apiKey: process.env.API_KEY,
   });
 
   const response = await openai.images.generate({
     model: 'dall-e-2',
-    prompt: 'A painting of a rose',
+    prompt: text,
     n: 1,
     size: '1024x1024',
   });

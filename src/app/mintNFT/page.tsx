@@ -6,7 +6,7 @@ import { timeValid } from '@/utils/utils';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
-const mintNFT = ({ params }: { params: { id: string } }) => {
+const MintNFT = ({ params }: { params: { id: string } }) => {
   const [invalidVerification, setInvalidVerification] = useState(false);
   const [fid, setFid] = useState(0);
   const [timestamp, setTimestamp] = useState(0);
@@ -56,4 +56,4 @@ const mintNFT = ({ params }: { params: { id: string } }) => {
   );
 };
 
-export default mintNFT;
+export default MintNFT;

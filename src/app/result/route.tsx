@@ -8,6 +8,18 @@ export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const answer = searchParams.get('answer');
 
+  console.log(answer);
+
+  const response = await fetch(
+    `${process.env.HOST_URL}/generateImage?text=${answer}`
+  );
+
+  const imageUrl = (await response.text()) as string;
+
+  if (!imageUrl) {
+    return new Response('Invalid Request', { status: 400 });
+  }
+
   try {
     return new ImageResponse(
       (
@@ -22,16 +34,7 @@ export async function GET(request: Request) {
             backgroundColor: 'black',
           }}
         >
-          <span
-            style={{
-              fontWeight: 'bold',
-              fontSize: '4rem',
-              marginTop: '1rem',
-              color: 'white',
-            }}
-          >
-            You have selected `{answer}`
-          </span>
+          <img width={'100%'} height={'100%'} src={imageUrl} />
         </div>
       ),
       {

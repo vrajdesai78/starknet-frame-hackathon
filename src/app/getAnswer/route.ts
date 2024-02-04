@@ -1,3 +1,4 @@
+import { redis } from '@/utils/db';
 import { getSSLHubRpcClient, Message } from '@farcaster/hub-nodejs';
 
 const HUB_URL = 'nemes.farcaster.xyz:2283';
@@ -27,9 +28,18 @@ export async function POST(request: Request) {
     return new Response(e, { status: 500 });
   }
 
+  console.log('validatedMessage', validatedMessage?.data);
+
   const buttonId = validatedMessage?.data?.frameActionBody?.buttonIndex || 0;
 
-  const imageUrl = `${process.env.HOST_URL}/result?answer=${buttonId}`;
+  const answers = (await redis.get(
+    validatedMessage?.data?.fid.toString() || ''
+  )) as string[];
+
+  const imageUrl = `${process.env.HOST_URL}/result?answer=${
+    answers[buttonId - 1]
+  }`;
+
   return new Response(
     `
         <!DOCTYPE html>
@@ -40,9 +50,10 @@ export async function POST(request: Request) {
                 <meta property="og:image" content="${imageUrl}" />
                 <meta name="fc:frame" content="vNext">
                 <meta name="fc:frame:image" content="${imageUrl}">
-                <meta name="fc:frame:post_url" content="${process.env.HOST_URL}/start">
+                <meta name="fc:frame:post_url" content="${process.env.HOST_URL}/afterResult">
                 <meta name="fc:frame:button:1" content="Continue your Story">
                 <meta name="fc:frame:button:2" content="Mint this as NFT">
+                <meta name="fc:frame:button:2:action" content="post_redirect"> 
             </head>
         <body>
         <p> Let's start creating a story </p>

@@ -33,7 +33,7 @@ export async function POST(request: Request) {
 
   if (buttonId === 1) {
     try {
-      const imageUrl = `${process.env.HOST_URL}/selectOption`;
+      const imageUrl = `${process.env.HOST_URL}/selectOption?fid=${validatedMessage?.data?.fid}`;
       return new Response(
         `
         <!DOCTYPE html>
