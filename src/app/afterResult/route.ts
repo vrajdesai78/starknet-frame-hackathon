@@ -4,6 +4,8 @@ import { getSSLHubRpcClient, Message } from '@farcaster/hub-nodejs';
 const HUB_URL = 'nemes.farcaster.xyz:2283';
 const client = getSSLHubRpcClient(HUB_URL);
 
+export const dynamic = 'force-dynamic';
+
 export async function POST(request: Request) {
   const body = await request.json();
 
@@ -32,7 +34,9 @@ export async function POST(request: Request) {
 
   if (buttonId === 1) {
     try {
-      const imageUrl = `${process.env.HOST_URL}/selectOption?fid=${validatedMessage?.data?.fid}`;
+      const imageUrl = `${process.env.HOST_URL}/selectRelevantOption?fid=${
+        validatedMessage?.data?.fid
+      }&time=${Date.now()}`;
       return new Response(
         `
           <!DOCTYPE html>
@@ -43,7 +47,9 @@ export async function POST(request: Request) {
                   <meta property="og:image" content="${imageUrl}" />
                   <meta name="fc:frame" content="vNext">
                   <meta name="fc:frame:image" content="${imageUrl}">
-                  <meta name="fc:frame:post_url" content="${process.env.HOST_URL}/getAnswer">
+                  <meta name="fc:frame:post_url" content="${
+                    process.env.HOST_URL
+                  }/getAnswer?time=${Date.now()}">
                   <meta name="fc:frame:button:1" content="Option A">
                   <meta name="fc:frame:button:2" content="Option B">
                   <meta name="fc:frame:button:3" content="Option C">

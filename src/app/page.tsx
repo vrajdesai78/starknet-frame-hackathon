@@ -3,7 +3,7 @@ import { Metadata } from 'next';
 export async function generateMetadata(): Promise<Metadata> {
   const fcMetadata: Record<string, string> = {
     'fc:frame': 'vNext',
-    'fc:frame:post_url': `${process.env.HOST_URL}/start`,
+    'fc:frame:post_url': `${process.env.HOST_URL}/start?time${Date.now()}`,
     'fc:frame:image': `https://t4.ftcdn.net/jpg/04/61/47/03/360_F_461470323_6TMQSkCCs9XQoTtyer8VCsFypxwRiDGU.jpg`,
     'fc:frame:button:1': 'Create your story',
   };

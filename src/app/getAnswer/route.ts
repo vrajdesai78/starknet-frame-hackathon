@@ -4,6 +4,8 @@ import { getSSLHubRpcClient, Message } from '@farcaster/hub-nodejs';
 const HUB_URL = 'nemes.farcaster.xyz:2283';
 const client = getSSLHubRpcClient(HUB_URL);
 
+export const dynamic = 'force-dynamic';
+
 export async function POST(request: Request) {
   const body = await request.json();
 
@@ -38,7 +40,7 @@ export async function POST(request: Request) {
 
   const imageUrl = `${process.env.HOST_URL}/result?answer=${
     answers[buttonId - 1]
-  }`;
+  }&time=${Date.now()}`;
 
   if (answers[buttonId - 1] && validatedMessage?.data?.fid) {
     await redis.set(
@@ -57,7 +59,9 @@ export async function POST(request: Request) {
                 <meta property="og:image" content="${imageUrl}" />
                 <meta name="fc:frame" content="vNext">
                 <meta name="fc:frame:image" content="${imageUrl}">
-                <meta name="fc:frame:post_url" content="${process.env.HOST_URL}/afterResult">
+                <meta name="fc:frame:post_url" content="${
+                  process.env.HOST_URL
+                }/afterResult?time=${Date.now()}">
                 <meta name="fc:frame:button:1" content="Continue your Story">
                 <meta name="fc:frame:button:2" content="Mint this as NFT">
                 <meta name="fc:frame:button:2:action" content="post_redirect"> 

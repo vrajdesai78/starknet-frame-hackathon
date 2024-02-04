@@ -1,3 +1,4 @@
+import { generateRelevantOptions } from '@/components/generateRelevantOptions';
 import { redis } from '@/utils/db';
 import { ImageResponse } from 'next/og';
 
@@ -13,21 +14,15 @@ export async function GET(request: Request) {
     return new Response('Invalid Request', { status: 400 });
   }
 
-  const pastData = (await redis.get(fid?.toString())) as string[];
+  const pastData = (await redis.get(fid?.toString())) as string;
 
-  let options;
-
-  if (pastData) {
-    const getOptions = await fetch(
-      `${process.env.HOST_URL}/generateRelevantOptions?story=${pastData}`
-    );
-    options = ((await getOptions.json()) as { options: string[] })?.options;
-  } else {
-    const getOptions = await fetch(
-      `${process.env.HOST_URL}/generateNewOptions`
-    );
-    options = ((await getOptions.json()) as { options: string[] })?.options;
+  if (!pastData) {
+    return new Response('Invalid Request', { status: 400 });
   }
+
+  const options = (
+    (await generateRelevantOptions({ text: pastData })) as { options: string[] }
+  ).options;
 
   console.log(options);
 

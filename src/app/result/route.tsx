@@ -1,3 +1,4 @@
+import { generateImage } from '@/components/generateImage';
 import { ImageResponse } from 'next/og';
 
 export const runtime = 'edge';
@@ -10,15 +11,11 @@ export async function GET(request: Request) {
 
   console.log(answer);
 
-  const response = await fetch(
-    `${process.env.HOST_URL}/generateImage?text=${answer}`
-  );
-
-  const imageUrl = (await response.text()) as string;
-
-  if (!imageUrl) {
+  if (!answer) {
     return new Response('Invalid Request', { status: 400 });
   }
+
+  const imageUrl = (await generateImage({ text: answer })) as string;
 
   console.log(imageUrl);
 

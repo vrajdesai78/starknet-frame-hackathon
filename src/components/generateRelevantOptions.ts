@@ -1,11 +1,10 @@
 import OpenAI from 'openai';
 
-export async function GET(request: Request) {
-  const { searchParams } = new URL(request.url);
-  const previousStory = searchParams.get('story');
+interface Props {
+  text: string;
+}
 
-  console.log('previousStory', previousStory);
-
+export const generateRelevantOptions = async ({ text }: Props) => {
   const openai = new OpenAI({
     apiKey: process.env.API_KEY,
   });
@@ -17,7 +16,7 @@ export async function GET(request: Request) {
         role: 'system',
         content: `
     I am creating a "Build your story" where I ask user to select one option from 4 and continue this process to have a full story. This options should be small of 4-5 words. 
-    Show me the options for the next step in the story based on the previous story i.e. "${previousStory}".
+    Show me the options for the next step in the story based on the previous story i.e. "${text}".
 
     return as an array in this format:
     ["option1", "option2", "option3", "option4"]
@@ -25,8 +24,14 @@ export async function GET(request: Request) {
       },
     ],
   });
-
-  return new Response(response.choices[0].message.content, {
-    status: 200,
-  });
-}
+  if (response?.choices[0]?.message?.content) {
+    const dataArray: string[] = JSON.parse(
+      response?.choices[0]?.message?.content.toString()
+    );
+    return {
+      options: dataArray,
+    };
+  } else {
+    throw new Error('Error in generating options');
+  }
+};
