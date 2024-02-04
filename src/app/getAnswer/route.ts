@@ -28,13 +28,13 @@ export async function POST(request: Request) {
     return new Response(e, { status: 500 });
   }
 
-  console.log('validatedMessage', validatedMessage?.data);
-
   const buttonId = validatedMessage?.data?.frameActionBody?.buttonIndex || 0;
 
   const answers = (await redis.get(
     validatedMessage?.data?.fid.toString() || ''
   )) as string[];
+
+  console.log('answers', answers);
 
   const imageUrl = `${process.env.HOST_URL}/result?answer=${
     answers[buttonId - 1]

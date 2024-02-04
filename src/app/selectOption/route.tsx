@@ -21,13 +21,15 @@ export async function GET(request: Request) {
     const getOptions = await fetch(
       `${process.env.HOST_URL}/generateRelevantOptions?story=${pastData}`
     );
-    options = (await getOptions.json()) as string[];
+    options = ((await getOptions.json()) as { options: string[] })?.options;
   } else {
     const getOptions = await fetch(
       `${process.env.HOST_URL}/generateNewOptions`
     );
-    options = (await getOptions.json()) as string[];
+    options = ((await getOptions.json()) as { options: string[] })?.options;
   }
+
+  console.log(options);
 
   await redis.set(fid?.toString(), options);
 
