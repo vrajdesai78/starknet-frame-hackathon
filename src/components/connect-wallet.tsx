@@ -1,21 +1,22 @@
-'use client';
-import { useEffect, useState } from 'react';
+"use client";
+import { useEffect, useState } from "react";
 import {
   useAccount,
   useConnect,
   useDisconnect,
   useSignTypedData,
-} from '@starknet-react/core';
-import { useStarknetkitConnectModal } from 'starknetkit';
+} from "@starknet-react/core";
+import { useStarknetkitConnectModal } from "starknetkit";
 import {
   shortString,
   typedData,
   Contract,
   RpcProvider,
   Signature,
-} from 'starknet';
-import { timeValid, getAbi } from '@/utils/utils';
-import Profile from '@/components/profile';
+} from "starknet";
+import { timeValid, getAbi } from "@/utils/utils";
+import Profile from "@/components/profile";
+import { abi, contractAddress } from "../utils/constants";
 
 type FarcasterData = {
   fid: number;
@@ -28,31 +29,31 @@ function ConnectWallet({ fid, timestamp }: FarcasterData) {
   const { disconnect } = useDisconnect();
   const { address, isConnected } = useAccount();
   const { starknetkitConnectModal } = useStarknetkitConnectModal({
-    dappName: 'Starknet Farcaster',
+    dappName: "Starknet Farcaster",
   });
 
   const message: typedData.TypedData = {
     domain: {
-      name: 'Starknet Farcaster',
-      version: '1',
-      chainId: shortString.encodeShortString('SN_MAIN'),
+      name: "Starknet Farcaster",
+      version: "1",
+      chainId: shortString.encodeShortString("SN_MAIN"),
     },
     types: {
       StarkNetDomain: [
-        { name: 'name', type: 'felt' },
-        { name: 'version', type: 'felt' },
-        { name: 'chainId', type: 'felt' },
+        { name: "name", type: "felt" },
+        { name: "version", type: "felt" },
+        { name: "chainId", type: "felt" },
       ],
       Verification: [
-        { name: 'fid', type: 'felt' },
-        { name: 'timestamp', type: 'felt' },
+        { name: "fid", type: "felt" },
+        { name: "timestamp", type: "felt" },
       ],
     },
     message: {
       fid,
       timestamp,
     },
-    primaryType: 'Verification',
+    primaryType: "Verification",
   };
   const { data, signTypedData, isPending } = useSignTypedData(message);
 
@@ -65,21 +66,44 @@ function ConnectWallet({ fid, timestamp }: FarcasterData) {
     await disconnect();
   };
 
+  const { account, status } = useAccount();
+  const contract = new Contract(abi, contractAddress);
+  const provider = new RpcProvider({
+    nodeUrl: "https://starknet-testnet.public.blastapi.io/rpc/v0_6",
+  });
+
+  const mintFunction = async () => {
+    console.log("Minting");
+
+    const fetchingABI = await getAbi(provider, contractAddress);
+    const contract = new Contract(abi, contractAddress, account);
+
+    const name = await contract.name();
+    console.log("Name:", name);
+
+    const minting = await contract.safeMint(
+      address, // recipient
+      7, // token id
+      [10, 10], // data in felt
+      10 // token URI in felt
+    );
+  };
+
   const addMapping = async (fid: number, starknetAddress: string) => {
     try {
-      const response = await fetch('/api/addMapping', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+      const response = await fetch("/api/addMapping", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ fid, starknetAddress }),
       });
 
       if (!response.ok) {
-        throw new Error('Network response was not ok');
+        throw new Error("Network response was not ok");
       }
 
       return response.json();
     } catch (error) {
-      console.error('Failed to add mapping:', error);
+      console.error("Failed to add mapping:", error);
     }
   };
 
@@ -88,7 +112,7 @@ function ConnectWallet({ fid, timestamp }: FarcasterData) {
     signature: Signature
   ) => {
     const provider = new RpcProvider({
-      nodeUrl: 'https://free-rpc.nethermind.io/mainnet-juno/',
+      nodeUrl: "https://starknet-testnet.public.blastapi.io/rpc/v0_6",
     });
 
     try {
@@ -102,12 +126,12 @@ function ConnectWallet({ fid, timestamp }: FarcasterData) {
       // Store the result in a database
       addMapping(fid, contractAddress)
         .then(() => {
-          console.log('Mapping added');
+          console.log("Mapping added");
           window.alert(
             `Successfully verified ownership of address: ${address}`
           );
         })
-        .catch((err) => console.error('Error adding mapping:', err));
+        .catch((err) => console.error("Error adding mapping:", err));
     } catch (error) {
       console.error(error);
     }
@@ -122,10 +146,10 @@ function ConnectWallet({ fid, timestamp }: FarcasterData) {
   return (
     <div
       style={{
-        padding: '20px',
-        maxWidth: '300px',
-        margin: 'auto',
-        textAlign: 'center',
+        padding: "20px",
+        maxWidth: "300px",
+        margin: "auto",
+        textAlign: "center",
       }}
     >
       {/* {address && <p style={{ marginBottom: "15px" }}>Address: {address}</p>} */}
@@ -134,12 +158,12 @@ function ConnectWallet({ fid, timestamp }: FarcasterData) {
         <button
           onClick={connectWallet}
           style={{
-            padding: '10px 15px',
-            cursor: 'pointer',
-            backgroundColor: 'black',
-            color: 'white',
-            border: 'none',
-            borderRadius: '5px',
+            padding: "10px 15px",
+            cursor: "pointer",
+            backgroundColor: "black",
+            color: "white",
+            border: "none",
+            borderRadius: "5px",
           }}
         >
           Connect to Starknet
@@ -157,20 +181,27 @@ function ConnectWallet({ fid, timestamp }: FarcasterData) {
               }}
               disabled={!address}
               style={{
-                padding: '10px 15px',
-                cursor: 'pointer',
-                backgroundColor: 'black',
-                color: 'white',
-                border: 'none',
-                borderRadius: '5px',
-                marginBottom: '10px',
+                padding: "10px 15px",
+                cursor: "pointer",
+                backgroundColor: "black",
+                color: "white",
+                border: "none",
+                borderRadius: "5px",
+                marginBottom: "10px",
               }}
             >
-              {isPending ? 'Waiting for wallet...' : 'Verify address ownership'}
+              {isPending ? "Waiting for wallet..." : "Verify address ownership"}
             </button>
           )}
           <br />
-          {/* <button
+          <button
+            onClick={() => {
+              mintFunction();
+            }}
+          >
+            Mint
+          </button>
+          <button
             onClick={disconnectWallet}
             style={{
               padding: "10px 15px",
@@ -182,7 +213,7 @@ function ConnectWallet({ fid, timestamp }: FarcasterData) {
             }}
           >
             Disconnect wallet
-          </button> */}
+          </button>
         </div>
       )}
     </div>

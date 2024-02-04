@@ -1,7 +1,7 @@
 "use client";
 import React from "react";
 
-import { mainnet } from "@starknet-react/chains";
+import { goerli } from "@starknet-react/chains";
 import {
   StarknetConfig,
   nethermindProvider,
@@ -24,7 +24,7 @@ export function StarknetProvider({ children }: { children: React.ReactNode }) {
 
   return (
     <StarknetConfig
-      chains={[mainnet]}
+      chains={[goerli]}
       provider={nethermindProvider({
         apiKey: process.env.NEXT_PUBLIC_NETHERMIND_API_KEY!,
       })}
