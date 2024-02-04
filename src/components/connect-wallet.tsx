@@ -12,6 +12,7 @@ import {
   typedData,
   Contract,
   RpcProvider,
+  num,
   Signature,
 } from "starknet";
 import { timeValid, getAbi } from "@/utils/utils";
@@ -81,12 +82,34 @@ function ConnectWallet({ fid, timestamp }: FarcasterData) {
     const name = await contract.name();
     console.log("Name:", name);
 
+    const demoURL = "http://tinyurl.com/yc4ajenr";
+
+    const tokenURI = num.hexToDecimalString(
+      shortString.encodeShortString(demoURL)
+    );
+
+    const storyLine = "Once upon a time...";
+
+    const feltStoryLine = string_to_feltArray(storyLine);
+    // convert feltStoryline to array
+
+    const feltStoryLineArray = feltStoryLine.split(",").map(Number);
+
     const minting = await contract.safeMint(
       address, // recipient
-      7, // token id
-      [10, 10], // data in felt
-      10 // token URI in felt
+      17, // token id
+      feltStoryLineArray, // data in felt
+      tokenURI // token URI in felt
     );
+  };
+
+  const string_to_feltArray = (str: string) => {
+    str = str
+      .split("")
+      .reduce((acc, char) => acc + char.charCodeAt(0) + ",", "")
+      .slice(0, -1);
+
+    return str;
   };
 
   const addMapping = async (fid: number, starknetAddress: string) => {
