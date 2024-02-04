@@ -12,6 +12,8 @@ export const generateStory = async ({ farcasterId }: Props) => {
     dangerouslyAllowBrowser: true,
   });
 
+  console.log('farcasterId', farcasterId);
+
   const story = (await redis.get(farcasterId)) as redisType;
 
   console.log('story', story);
@@ -23,7 +25,7 @@ export const generateStory = async ({ farcasterId }: Props) => {
         role: 'system',
         content: `
         You are an amazing Story writer who writes nail biting story, i am giving you some portions of a story, 
-        and you have to make an entire short story using points.
+        and you have to make an entire short story using points. The word limit of the story should be 350 words.
 
         Here are the points:
 
@@ -35,6 +37,8 @@ export const generateStory = async ({ farcasterId }: Props) => {
   });
 
   const text = response?.choices[0].message.content;
+
+  console.log('text', text);
 
   return text;
 };

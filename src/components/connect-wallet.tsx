@@ -20,6 +20,7 @@ import Profile from '@/components/profile';
 import { abi, contractAddress } from '../utils/constants';
 import { nanoid } from 'nanoid';
 import { generateStory } from './generateStory';
+import { toast } from 'react-toastify';
 
 type FarcasterData = {
   fid: number;
@@ -31,6 +32,8 @@ function ConnectWallet({ fid, timestamp }: FarcasterData) {
   const { connect } = useConnect();
   const { disconnect } = useDisconnect();
   const { address, isConnected } = useAccount();
+  const [isMinting, setIsMinting] = useState(false);
+
   const { starknetkitConnectModal } = useStarknetkitConnectModal({
     dappName: 'Starknet Farcaster',
   });
@@ -81,6 +84,8 @@ function ConnectWallet({ fid, timestamp }: FarcasterData) {
   const mintFunction = async () => {
     console.log('Minting');
 
+    setIsMinting(true);
+
     const fetchingABI = await getAbi(provider, contractAddress);
     const contract = new Contract(abi, contractAddress, account);
 
@@ -104,12 +109,21 @@ function ConnectWallet({ fid, timestamp }: FarcasterData) {
 
     const feltStoryLineArray = feltStoryLine.split(',').map(Number);
 
-    await contract.safeMint(
+    const tx = await contract.safeMint(
       address, // recipient
       getRandomInt(999, 99999), // token id
       feltStoryLineArray, // data in felt
       tokenURI // token URI in felt
     );
+
+    if (tx) {
+      toast('Minted successfully, here is the transaction', {
+        onClick: () => {
+          window.location.href = `https://testnet.starkscan.co/tx/${tx.transaction_hash}`;
+        },
+      });
+      setIsMinting(false);
+    }
   };
 
   const string_to_feltArray = (str: string) => {
@@ -213,7 +227,7 @@ function ConnectWallet({ fid, timestamp }: FarcasterData) {
               mintFunction();
             }}
           >
-            Mint
+            {isMinting ? 'Forging your story...' : 'Mint your Story'}
           </button>
         </div>
       )}

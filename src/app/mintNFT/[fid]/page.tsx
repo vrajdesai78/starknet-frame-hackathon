@@ -5,18 +5,14 @@ import { StarknetProvider } from '@/components/starknet-provider';
 import { timeValid } from '@/utils/utils';
 import { useEffect, useState } from 'react';
 
-interface MinterProps {
-  id: string | undefined;
-  farcasterId: string;
-}
-
-const Minter = ({ params }: { params: { id: string } }) => {
+const Minter = ({ params }: { params: { fid: string } }) => {
   const [invalidVerification, setInvalidVerification] = useState(false);
   const [fid, setFid] = useState(0);
   const [timestamp, setTimestamp] = useState(0);
 
   useEffect(() => {
-    const messageBytes = params.id;
+    console.log('params.id: ', params.fid);
+    const messageBytes = params.fid;
     console.log(messageBytes);
     if (messageBytes) {
       fetch('/api/validate', {
@@ -41,22 +37,13 @@ const Minter = ({ params }: { params: { id: string } }) => {
           setInvalidVerification(true);
         });
     }
-  }, [params.id]);
+  }, [params.fid]);
 
   return (
     <div>
-      {invalidVerification ? (
-        <div>
-          <h1>Invalid Verification</h1>
-          <p>The verification link is invalid.</p>
-        </div>
-      ) : (
-        <div>
-          <StarknetProvider>
-            <ConnectWallet fid={fid} timestamp={timestamp} />
-          </StarknetProvider>
-        </div>
-      )}
+      <StarknetProvider>
+        <ConnectWallet fid={Number(params.fid)} timestamp={timestamp} />
+      </StarknetProvider>
     </div>
   );
 };
