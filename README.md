@@ -4,4 +4,4 @@ A AI generated story awaits for you. Play the game, make the choices and see how
 
 The entire storyline gets minted as an NFT on Starknet, let's see who is a good storyteller.
 
-Test it here: 
+Test it here: [https://starknet-story-frame.vercel.app/](https://starknet-story-frame.vercel.app/)
