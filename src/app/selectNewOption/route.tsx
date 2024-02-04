@@ -25,6 +25,7 @@ export async function GET(request: Request) {
   await redis.set(fid?.toString(), {
     options: options,
     answers: '',
+    image: '',
   } as redisType);
 
   try {

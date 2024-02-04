@@ -3,16 +3,21 @@
 import ConnectWallet from '@/components/connect-wallet';
 import { StarknetProvider } from '@/components/starknet-provider';
 import { timeValid } from '@/utils/utils';
-import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
-const MintNFT = ({ params }: { params: { id: string } }) => {
+interface MinterProps {
+  id: string | undefined;
+  farcasterId: string;
+}
+
+const Minter = ({ id, farcasterId }: MinterProps) => {
   const [invalidVerification, setInvalidVerification] = useState(false);
   const [fid, setFid] = useState(0);
   const [timestamp, setTimestamp] = useState(0);
 
   useEffect(() => {
-    const messageBytes = params.id;
+    const messageBytes = id;
+    console.log(messageBytes);
     if (messageBytes) {
       fetch('/api/validate', {
         method: 'POST',
@@ -36,7 +41,7 @@ const MintNFT = ({ params }: { params: { id: string } }) => {
           setInvalidVerification(true);
         });
     }
-  }, [params.id]);
+  }, [id]);
 
   return (
     <div>
@@ -48,7 +53,11 @@ const MintNFT = ({ params }: { params: { id: string } }) => {
       ) : (
         <div>
           <StarknetProvider>
-            <ConnectWallet fid={fid} timestamp={timestamp} />
+            <ConnectWallet
+              fid={fid}
+              farcasterId={farcasterId}
+              timestamp={timestamp}
+            />
           </StarknetProvider>
         </div>
       )}
@@ -56,4 +65,4 @@ const MintNFT = ({ params }: { params: { id: string } }) => {
   );
 };
 
-export default MintNFT;
+export default Minter;

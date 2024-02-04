@@ -19,13 +19,15 @@ import { timeValid, getAbi } from '@/utils/utils';
 import Profile from '@/components/profile';
 import { abi, contractAddress } from '../utils/constants';
 import { nanoid } from 'nanoid';
+import { generateStory } from './generateStory';
 
 type FarcasterData = {
   fid: number;
   timestamp: number;
+  farcasterId: string;
 };
 
-function ConnectWallet({ fid, timestamp }: FarcasterData) {
+function ConnectWallet({ fid, timestamp, farcasterId }: FarcasterData) {
   const [validSignature, setValidSignature] = useState(false);
   const { connect } = useConnect();
   const { disconnect } = useDisconnect();
@@ -92,14 +94,14 @@ function ConnectWallet({ fid, timestamp }: FarcasterData) {
       shortString.encodeShortString(demoURL)
     );
 
-    const storyLine = 'Once upon a time...';
+    const storyLine = (await generateStory({ farcasterId })) as string;
 
     const feltStoryLine = string_to_feltArray(storyLine);
     // convert feltStoryline to array
 
     const feltStoryLineArray = feltStoryLine.split(',').map(Number);
 
-    const minting = await contract.safeMint(
+    await contract.safeMint(
       address, // recipient
       getRandomInt(999, 99999), // token id
       feltStoryLineArray, // data in felt
@@ -170,6 +172,8 @@ function ConnectWallet({ fid, timestamp }: FarcasterData) {
     }
   }, [data]);
 
+  useEffect(() => {}, []);
+
   return (
     <div
       style={{
@@ -186,38 +190,7 @@ function ConnectWallet({ fid, timestamp }: FarcasterData) {
           Connect to Starknet
         </button>
       ) : (
-        <div>
-          {validSignature ? (
-            <Profile />
-          ) : (
-            <button
-              onClick={() => {
-                if (timeValid(timestamp)) {
-                  signTypedData();
-                }
-              }}
-              disabled={!address}
-              style={{
-                padding: '10px 15px',
-                cursor: 'pointer',
-                backgroundColor: 'black',
-                color: 'white',
-                border: 'none',
-                borderRadius: '5px',
-                marginBottom: '10px',
-              }}
-            >
-              {isPending ? 'Waiting for wallet...' : 'Verify address ownership'}
-            </button>
-          )}
-          <br />
-          <button
-            onClick={() => {
-              mintFunction();
-            }}
-          >
-            Mint
-          </button>
+        <div className='flex flex-col gap-2'>
           <button
             onClick={disconnectWallet}
             style={{
@@ -230,6 +203,14 @@ function ConnectWallet({ fid, timestamp }: FarcasterData) {
             }}
           >
             Disconnect wallet
+          </button>
+          <button
+            className='bg-gray-800 p-2 rounded-lg'
+            onClick={() => {
+              mintFunction();
+            }}
+          >
+            Mint
           </button>
         </div>
       )}

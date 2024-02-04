@@ -37,4 +37,5 @@ export const getAbi = async (
 export interface redisType {
   options: string[];
   answers: string;
+  image: string;
 }

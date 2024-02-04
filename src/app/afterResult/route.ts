@@ -77,7 +77,7 @@ export async function POST(request: Request) {
     return new Response('Minting NFT', {
       status: 302,
       headers: {
-        Location: `${process.env.HOST_URL}/mintNFT`,
+        Location: `${process.env.HOST_URL}/mintNFT?fid=${validatedMessage?.data?.fid}`,
       },
     });
   }

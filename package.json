@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@farcaster/hub-nodejs": "^0.10.23",
+    "@spheron/storage": "^2.0.4",
     "@starknet-react/core": "^2.2.4",
     "@upstash/redis": "^1.28.3",
     "axios": "^1.6.7",

@@ -41,7 +41,7 @@ export async function POST(request: Request) {
 
   const imageUrl = `${process.env.HOST_URL}/result?answer=${
     answers[buttonId - 1]
-  }&time=${Date.now()}`;
+  }&time=${Date.now()}&fid=${validatedMessage?.data?.fid}`;
 
   if (answers[buttonId - 1] && validatedMessage?.data?.fid) {
     const pastData = (await redis.get(
