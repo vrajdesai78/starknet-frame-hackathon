@@ -23,7 +23,7 @@ export async function GET(request: Request) {
 
   if (response?.choices[0]?.message?.content) {
     const dataArray: string[] = JSON.parse(
-      response?.choices[0]?.message?.content
+      response?.choices[0]?.message?.content.toString()
     );
     return Response.json({
       options: dataArray,
