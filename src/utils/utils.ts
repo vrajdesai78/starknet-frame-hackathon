@@ -33,3 +33,8 @@ export const getAbi = async (
 
   return abi;
 };
+
+export interface redisType {
+  options: string[];
+  answers: string;
+}

@@ -1,5 +1,6 @@
 import { generateNewOptions } from '@/components/generateNewOptions';
 import { redis } from '@/utils/db';
+import { redisType } from '@/utils/utils';
 import { ImageResponse } from 'next/og';
 
 export const runtime = 'edge';
@@ -21,7 +22,10 @@ export async function GET(request: Request) {
 
   console.log(options);
 
-  await redis.set(fid?.toString(), options);
+  await redis.set(fid?.toString(), {
+    options: options,
+    answers: '',
+  } as redisType);
 
   try {
     return new ImageResponse(

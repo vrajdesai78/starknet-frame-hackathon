@@ -1,5 +1,6 @@
 import { generateRelevantOptions } from '@/components/generateRelevantOptions';
 import { redis } from '@/utils/db';
+import { redisType } from '@/utils/utils';
 import { ImageResponse } from 'next/og';
 
 export const runtime = 'edge';
@@ -14,19 +15,24 @@ export async function GET(request: Request) {
     return new Response('Invalid Request', { status: 400 });
   }
 
-  const pastData = (await redis.get(fid?.toString())) as string;
+  const existingData = (await redis.get(fid?.toString())) as redisType;
 
-  if (!pastData) {
+  if (!existingData) {
     return new Response('Invalid Request', { status: 400 });
   }
 
   const options = (
-    (await generateRelevantOptions({ text: pastData })) as { options: string[] }
+    (await generateRelevantOptions({ text: existingData.answers })) as {
+      options: string[];
+    }
   ).options;
 
-  console.log(options);
+  await redis.set(fid, {
+    ...existingData,
+    options: options,
+  });
 
-  await redis.set(fid?.toString(), options);
+  console.log(options);
 
   try {
     return new ImageResponse(

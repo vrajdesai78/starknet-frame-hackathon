@@ -1,4 +1,5 @@
 import { redis } from '@/utils/db';
+import { redisType } from '@/utils/utils';
 import { getSSLHubRpcClient, Message } from '@farcaster/hub-nodejs';
 
 const HUB_URL = 'nemes.farcaster.xyz:2283';
@@ -32,9 +33,9 @@ export async function POST(request: Request) {
 
   const buttonId = validatedMessage?.data?.frameActionBody?.buttonIndex || 0;
 
-  const answers = (await redis.get(
-    validatedMessage?.data?.fid.toString() || ''
-  )) as string[];
+  const answers = (
+    (await redis.get(validatedMessage?.data?.fid.toString() || '')) as redisType
+  ).options;
 
   console.log('answers', answers);
 
@@ -43,10 +44,15 @@ export async function POST(request: Request) {
   }&time=${Date.now()}`;
 
   if (answers[buttonId - 1] && validatedMessage?.data?.fid) {
-    await redis.set(
-      validatedMessage?.data?.fid.toString(),
-      answers[buttonId - 1]
-    );
+    const pastData = (await redis.get(
+      validatedMessage?.data?.fid.toString()
+    )) as redisType;
+    console.log('fid', validatedMessage?.data?.fid);
+    console.log('answers', pastData);
+    await redis.set(validatedMessage?.data?.fid.toString(), {
+      ...pastData,
+      answers: `${pastData.answers}, ${answers[buttonId - 1]}`,
+    });
   }
 
   return new Response(
