@@ -1,4 +1,4 @@
-import OpenAI from "openai";
+import OpenAI from 'openai';
 
 interface Props {
   text: string;
@@ -6,7 +6,8 @@ interface Props {
 
 export const generateImage = async ({ text }: Props) => {
   const openai = new OpenAI({
-    apiKey: process.env.API_KEY,
+    apiKey: process.env.NEXT_PUBLIC_API_KEY,
+    dangerouslyAllowBrowser: true,
   });
 
   const response = await openai.images.generate({

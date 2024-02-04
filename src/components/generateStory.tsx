@@ -8,10 +8,13 @@ interface Props {
 
 export const generateStory = async ({ farcasterId }: Props) => {
   const openai = new OpenAI({
-    apiKey: process.env.API_KEY,
+    apiKey: process.env.NEXT_PUBLIC_API_KEY,
+    dangerouslyAllowBrowser: true,
   });
 
   const story = (await redis.get(farcasterId)) as redisType;
+
+  console.log('story', story);
 
   const response = await openai.chat.completions.create({
     model: 'gpt-4',

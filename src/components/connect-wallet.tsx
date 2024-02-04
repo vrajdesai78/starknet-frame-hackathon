@@ -24,10 +24,9 @@ import { generateStory } from './generateStory';
 type FarcasterData = {
   fid: number;
   timestamp: number;
-  farcasterId: string;
 };
 
-function ConnectWallet({ fid, timestamp, farcasterId }: FarcasterData) {
+function ConnectWallet({ fid, timestamp }: FarcasterData) {
   const [validSignature, setValidSignature] = useState(false);
   const { connect } = useConnect();
   const { disconnect } = useDisconnect();
@@ -94,7 +93,11 @@ function ConnectWallet({ fid, timestamp, farcasterId }: FarcasterData) {
       shortString.encodeShortString(demoURL)
     );
 
-    const storyLine = (await generateStory({ farcasterId })) as string;
+    const storyLine = (await generateStory({
+      farcasterId: fid.toString(),
+    })) as string;
+
+    console.log('Storyline:', storyLine);
 
     const feltStoryLine = string_to_feltArray(storyLine);
     // convert feltStoryline to array

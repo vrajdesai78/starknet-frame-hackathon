@@ -73,11 +73,10 @@ export async function POST(request: Request) {
   }
 
   if (buttonId === 2) {
-    await redis.del(validatedMessage?.data?.fid.toString() || '');
     return new Response('Minting NFT', {
       status: 302,
       headers: {
-        Location: `${process.env.HOST_URL}/mintNFT?fid=${validatedMessage?.data?.fid}`,
+        Location: `${process.env.HOST_URL}/mintNFT/${validatedMessage?.data?.fid}`,
       },
     });
   }

@@ -6,7 +6,8 @@ interface Props {
 
 export const generateRelevantOptions = async ({ text }: Props) => {
   const openai = new OpenAI({
-    apiKey: process.env.API_KEY,
+    apiKey: process.env.NEXT_PUBLIC_API_KEY,
+    dangerouslyAllowBrowser: true,
   });
 
   const response = await openai.chat.completions.create({
