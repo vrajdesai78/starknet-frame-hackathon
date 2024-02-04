@@ -40,6 +40,13 @@ export async function POST(request: Request) {
     answers[buttonId - 1]
   }`;
 
+  if (answers[buttonId - 1] && validatedMessage?.data?.fid) {
+    await redis.set(
+      validatedMessage?.data?.fid.toString(),
+      answers[buttonId - 1]
+    );
+  }
+
   return new Response(
     `
         <!DOCTYPE html>

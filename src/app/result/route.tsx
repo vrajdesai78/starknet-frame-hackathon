@@ -20,6 +20,8 @@ export async function GET(request: Request) {
     return new Response('Invalid Request', { status: 400 });
   }
 
+  console.log(imageUrl);
+
   try {
     return new ImageResponse(
       (

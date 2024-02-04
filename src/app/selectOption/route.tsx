@@ -13,11 +13,23 @@ export async function GET(request: Request) {
     return new Response('Invalid Request', { status: 400 });
   }
 
-  const getOptions = await fetch(`${process.env.HOST_URL}/generateNewOptions`);
+  const pastData = (await redis.get(fid?.toString())) as string[];
 
-  const response = (await getOptions.json()) as { options: string[] };
+  let options;
 
-  await redis.set(fid?.toString(), response.options);
+  if (pastData) {
+    const getOptions = await fetch(
+      `${process.env.HOST_URL}/generateRelevantOptions?story=${pastData}`
+    );
+    options = (await getOptions.json()) as string[];
+  } else {
+    const getOptions = await fetch(
+      `${process.env.HOST_URL}/generateNewOptions`
+    );
+    options = (await getOptions.json()) as string[];
+  }
+
+  await redis.set(fid?.toString(), options);
 
   try {
     return new ImageResponse(
@@ -54,7 +66,7 @@ export async function GET(request: Request) {
               margin: '1.5rem',
             }}
           >
-            {response.options.map((option: string, idx: number) => (
+            {options.map((option: string, idx: number) => (
               <span tw='text-white text-2xl w-[48%] items-center' key={idx}>
                 {idx + 1}. {option}
               </span>

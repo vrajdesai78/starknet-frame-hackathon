@@ -16,7 +16,8 @@ export async function GET(request: Request) {
     model: 'dall-e-2',
     prompt: text,
     n: 1,
-    size: '1024x1024',
+    size: '512x512',
+    quality: 'standard',
   });
 
   const imageUrl = response.data[0].url;

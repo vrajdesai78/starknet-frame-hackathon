@@ -1,3 +1,4 @@
+import { redis } from '@/utils/db';
 import { getSSLHubRpcClient, Message } from '@farcaster/hub-nodejs';
 
 const HUB_URL = 'nemes.farcaster.xyz:2283';
@@ -31,7 +32,7 @@ export async function POST(request: Request) {
 
   if (buttonId === 1) {
     try {
-      const imageUrl = `${process.env.HOST_URL}/selectOption`;
+      const imageUrl = `${process.env.HOST_URL}/selectOption?fid=${validatedMessage?.data?.fid}`;
       return new Response(
         `
           <!DOCTYPE html>
@@ -66,6 +67,7 @@ export async function POST(request: Request) {
   }
 
   if (buttonId === 2) {
+    await redis.del(validatedMessage?.data?.fid.toString() || '');
     return new Response('Minting NFT', {
       status: 302,
       headers: {
