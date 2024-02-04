@@ -29,7 +29,7 @@ export async function POST(request: Request) {
 
   const buttonId = validatedMessage?.data?.frameActionBody?.buttonIndex || 0;
 
-  const imageUrl = `${process.env.HOST_URL}/result?option=${buttonId}`;
+  const imageUrl = `${process.env.HOST_URL}/result?answer=${buttonId}`;
   return new Response(
     `
         <!DOCTYPE html>
