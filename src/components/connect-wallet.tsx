@@ -119,7 +119,7 @@ function ConnectWallet({ fid, timestamp }: FarcasterData) {
     if (tx) {
       toast("Minted successfully, here is the transaction", {
         onClick: () => {
-          window.location.href = `https://testnet.starkscan.co/tx/${tx.transaction_hash}`;
+          window.location.href = `https://starkscan.co/tx/${tx.transaction_hash}`;
         },
       });
       setIsMinting(false);
